@@ -218,19 +218,6 @@
       "delay": 10000
     },
     {
-      "plugin": "GCTSwitch",
-      "enabled": true,
-      "discordClient": "discord",
-      "channelID": "",
-      "chatColors": {},
-      "color": 16761867,
-      "commands": [
-        "!switch"
-      ],
-      "cooldownTime": 60000,
-      "cooldownMessage": "The command will be available again at"
-    },
-    {
       "plugin": "IntervalledBroadcasts",
       "enabled": false,
       "broadcasts": [],
@@ -258,6 +245,27 @@
       "plugin": "TeamRandomizer",
       "enabled": true,
       "command": "randomize"
+    },
+    {
+      "plugin": "GCTSwitch",
+      "enabled": true,
+      "discordClient": "discord",
+      "channelID": "",
+      "chatColors": {},
+      "color": 16761867,
+      "commands": [
+        "!switch"
+      ],
+      "cooldownTime": 60000,
+      "cooldownMessage": "The command will be available again at"
+    },
+    {
+      "plugin": "GCTLeader",
+      "enabled": true,
+      "discordClient": "discord",
+      "channelID": "1292371911929630793",
+      "color": 16761867,
+      "updateInterval": 3000
     }
   ],
   "logger": {
