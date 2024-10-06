@@ -58,8 +58,8 @@ export default class GCTLeader extends DiscordBasePlugin {
     //     timestamp: info.time.toISOString()
     //   }
     // });
-    console.log('\n\n')
-    console.log(this.server.players)
-    console.log('\n\n')
+    // console.log('\n\n')
+    // console.log(this.server.players)
+    // console.log('\n\n')
   }
 }

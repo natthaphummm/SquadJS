@@ -70,7 +70,9 @@ export default class GCTSwitch extends DiscordBasePlugin {
       const date = new Date(cmdTimers[info.player.steamID]);
       this.server.rcon.warn(
         info.player.eosID,
-        `${this.options.cooldownMessage} ${date.getHours()}:${date.getMinutes()}`
+        `${this.options.cooldownMessage} ${
+          date.getHours().toString().length > 1 ? date.getHours() : `0${date.getHours()}`
+        }:${date.getMinutes().toString().length > 1 ? date.getMinutes() : `0${date.getMinutes()}`}`
       );
       return;
     }
