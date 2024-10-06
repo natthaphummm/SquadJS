@@ -220,10 +220,8 @@
     {
       "plugin": "GCTLeader",
       "enabled": true,
-      "discordClient": "discord",
-      "channelID": "",
-      "updateInterval": 60000,
-      "color": 16761867
+      "updateInterval": 15000,
+      "warnMessage": "หากไม่เปลี่ยนเป็น Role Leader, Squad นี้จะถูกยุบภายใน 5 นาที"
     },
     {
       "plugin": "GCTSwitch",

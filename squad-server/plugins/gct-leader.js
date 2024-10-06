@@ -1,5 +1,6 @@
 import DiscordBasePlugin from './discord-base-plugin.js';
 
+
 export default class GCTLeader extends DiscordBasePlugin {
   static get description() {
     return 'The <code>DiscordServerStatus</code> plugin can be used to get the server status in Discord.';
@@ -12,28 +13,22 @@ export default class GCTLeader extends DiscordBasePlugin {
   static get optionsSpecification() {
     return {
       ...DiscordBasePlugin.optionsSpecification,
-      channelID: {
-        required: true,
-        description: 'The ID of the channel to log round end events to.',
-        default: '',
-        example: '1292371911929630793'
-      },
       updateInterval: {
         required: false,
         description: 'How frequently to update the time in Discord.',
         default: 60 * 1000
       },
-      color: {
-        required: false,
-        description: 'The color of the embed.',
-        default: 16761867
+      warnMessage: {
+        required: true,
+        description: 'Message for alert.',
+        default: "If not changed to Role Leader, this Squad will be disbanded within 5 minutes."
       }
     };
   }
 
   constructor(server, options, connectors) {
     super(server, options, connectors);
-
+    this.warningList = [];
     this.updateStatus = this.updateStatus.bind(this);
   }
 
@@ -48,18 +43,30 @@ export default class GCTLeader extends DiscordBasePlugin {
   }
 
   async updateStatus() {
-    // if (!this.options.setBotStatus) return;
-    // let listPlayer = this.server.players
-    // await this.sendDiscordMessage({
-    //   embed: {
-    //     title: 'Round Ended',
-    //     description: "```"+this.server.players+"```",
-    //     color: this.options.color,
-    //     timestamp: info.time.toISOString()
-    //   }
-    // });
-    // console.log('\n\n')
-    // console.log(this.server.players)
-    // console.log('\n\n')
+    if (!this.server.players.length) return;
+
+    const players = this.server.players
+    const leaders = players.filter((player) => player.isLeader && player.squadID !== null);
+    
+    leaders.forEach(player => {
+      const warning = this.warningList.find((warning) => warning.eosID === player.eosID)
+      if (warning && (player.isLeader && !player.role.includes('_SL'))) {
+        this.server.rcon.execute(`AdminDisbandSquad ${player.teamID} ${player.squadID}`);
+      }
+    });
+
+    // Reset Warning List
+    this.warningList = [];
+
+    // New Warning List
+    setTimeout(() => {
+      this.warningList =  this.server.players.filter((player) => player.isLeader && (!player.role.includes('_SL') && player.squadID !== null));
+
+      this.warningList.forEach(async (player) => {
+        if (!this.isInWarningList(player)) {
+          await this.server.rcon.warn(player.eosID, this.options.warnMessage);
+        }
+      });
+    }, 500)
   }
 }
