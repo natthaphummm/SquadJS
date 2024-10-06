@@ -805,6 +805,54 @@ Grafana:
         </details>
 
 <details>
+          <summary>GCTSwitch</summary>
+          <h2>GCTSwitch</h2>
+          <p>The <code>GCT Switch Team</code> plugin will log in-game chat to a Discord channel.</p>
+          <h3>Options</h3>
+          <ul><li><h4>discordClient (Required)</h4>
+           <h6>Description</h6>
+           <p>Discord connector name.</p>
+           <h6>Default</h6>
+           <pre><code>discord</code></pre></li>
+<li><h4>channelID (Required)</h4>
+           <h6>Description</h6>
+           <p>The ID of the channel to log admin broadcasts to.</p>
+           <h6>Default</h6>
+           <pre><code></code></pre></li><h6>Example</h6>
+           <pre><code>667741905228136459</code></pre>
+<li><h4>chatColors</h4>
+           <h6>Description</h6>
+           <p>The color of the embed for each chat.</p>
+           <h6>Default</h6>
+           <pre><code>{}</code></pre></li><h6>Example</h6>
+           <pre><code>{
+  "main": 16761867
+}</code></pre>
+<li><h4>color</h4>
+           <h6>Description</h6>
+           <p>The color of the embed.</p>
+           <h6>Default</h6>
+           <pre><code>16761867</code></pre></li>
+<li><h4>commands (Required)</h4>
+           <h6>Description</h6>
+           <p>A command for use ingame-chat.</p>
+           <h6>Default</h6>
+           <pre><code>[
+  "!switch"
+]</code></pre></li>
+<li><h4>cooldownTime (Required)</h4>
+           <h6>Description</h6>
+           <p>Cooldown time(ms)</p>
+           <h6>Default</h6>
+           <pre><code>60000</code></pre></li>
+<li><h4>cooldownMessage (Required)</h4>
+           <h6>Description</h6>
+           <p>Message for alert cooldown time.</p>
+           <h6>Default</h6>
+           <pre><code>The command will be available again at</code></pre></li></ul>
+        </details>
+
+<details>
           <summary>IntervalledBroadcasts</summary>
           <h2>IntervalledBroadcasts</h2>
           <p>The <code>IntervalledBroadcasts</code> plugin allows you to set broadcasts, which will be broadcasted at preset intervals</p>

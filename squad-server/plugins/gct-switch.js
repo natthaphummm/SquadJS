@@ -1,8 +1,10 @@
 import DiscordBasePlugin from './discord-base-plugin.js';
 
-export default class DiscordChat extends DiscordBasePlugin {
+const cmdTimers = {};
+
+export default class GCTSwitch extends DiscordBasePlugin {
   static get description() {
-    return 'The <code>DiscordChat</code> plugin will log in-game chat to a Discord channel.';
+    return 'The <code>GCT Switch Team</code> plugin will log in-game chat to a Discord channel.';
   }
 
   static get defaultEnabled() {
@@ -22,17 +24,27 @@ export default class DiscordChat extends DiscordBasePlugin {
         required: false,
         description: 'The color of the embed for each chat.',
         default: {},
-        example: { ChatAll: 16761867 }
+        example: { main: 16761867 }
       },
       color: {
         required: false,
         description: 'The color of the embed.',
         default: 16761867
       },
-      ignoreChats: {
-        required: false,
-        default: ['ChatSquad'],
-        description: 'A list of chat names to ignore.'
+      commands: {
+        required: true,
+        default: ['!switch'],
+        description: 'A command for use ingame-chat.'
+      },
+      cooldownTime: {
+        required: true,
+        description: 'Cooldown time(ms)',
+        default: 60000
+      },
+      cooldownMessage: {
+        required: true,
+        description: 'Message for alert cooldown time.',
+        default: 'The command will be available again at'
       }
     };
   }
@@ -52,17 +64,26 @@ export default class DiscordChat extends DiscordBasePlugin {
   }
 
   async onChatMessage(info) {
-    if (this.options.ignoreChats.includes(info.chat)) return;
+    if (!this.options.commands.includes(info.message)) return;
 
-    // if (info.message === '!switch' || info.message === '!ย้าย' ) {
-    //   console.log(info.player.eosID + ' Reques to Switch Team')
-    //   await this.server.rcon.switchTeam(info.player.eosID);
-    // }
+    if (cmdTimers[info.player.steamID] && cmdTimers[info.player.steamID] >= Date.now()) {
+      const date = new Date(cmdTimers[info.player.steamID]);
+      this.server.rcon.warn(
+        info.player.eosID,
+        `${this.options.cooldownMessage} ${date.getHours()}:${date.getMinutes()}`
+      );
+      return;
+    }
+
+    cmdTimers[info.player.steamID] = Date.now() + this.options.cooldownTime;
+
+    const { teamID } = info.player;
+    await this.server.rcon.switchTeam(info.player.eosID);
 
     await this.sendDiscordMessage({
       embed: {
-        title: info.chat,
-        color: this.options.chatColors[info.chat] || this.options.color,
+        title: 'Change Team',
+        color: this.options.color,
         fields: [
           {
             name: 'Player',
@@ -80,12 +101,8 @@ export default class DiscordChat extends DiscordBasePlugin {
             inline: true
           },
           {
-            name: 'Team & Squad',
-            value: `Team: ${info.player.teamID}, Squad: ${info.player.squadID || 'Unassigned'}`
-          },
-          {
-            name: 'Message',
-            value: `${info.message}`
+            name: 'Team Change',
+            value: `From Team ${teamID} to Team ${teamID === '1' ? '2' : '1'}`
           }
         ],
         timestamp: info.time.toISOString()

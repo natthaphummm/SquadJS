@@ -4,6 +4,8 @@ import DiscordBasePlugin from './discord-base-plugin.js';
 
 const { request, gql } = GraphQLRequest;
 
+const regexName = /^\d+$/;
+
 export default class CBLInfo extends DiscordBasePlugin {
   static get description() {
     return (
@@ -51,6 +53,29 @@ export default class CBLInfo extends DiscordBasePlugin {
   }
 
   async onPlayerConnected(info) {
+    console.log(`${info.player.name} name is number ${regexName.test(info.player.name.trim())}`);
+    if (regexName.test(info.player.name.trim())) {
+      this.server.rcon.kick(info.player.eosID, 'Unauthorized name');
+      this.verbose(
+        2,
+        `Player ${info.player.name} (Steam ID: ${info.player.steamID}) is a unauthorized name.`
+      );
+
+      await this.sendDiscordMessage({
+        embed: {
+          title: `${info.player.name} is a unauthorized name!`,
+          author: {
+            name: 'Community Ban List',
+            url: 'https://communitybanlist.com/',
+            icon_url: 'https://communitybanlist.com/static/media/cbl-logo.caf6584e.png'
+          },
+          color: '#ffc40b',
+          timestamp: info.time.toISOString()
+        }
+      });
+      return;
+    }
+
     try {
       const data = await request(
         'https://communitybanlist.com/graphql',
@@ -99,7 +124,7 @@ export default class CBLInfo extends DiscordBasePlugin {
       if (data.steamUser.reputationPoints < this.options.threshold) {
         this.verbose(
           2,
-          `Player ${info.player.name} (Steam ID: ${info.player.steamID}) has a reputation below the threshold.`
+          `Player ${info.player.name} (Steam ID: ${info.player.steamID}) has a unauthorized name.`
         );
         return;
       }
